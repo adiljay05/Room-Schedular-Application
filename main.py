@@ -44,6 +44,12 @@ def add_booking_to_database():
         return "<script>alert('Booking is overlapping, Please select another time'); window.history.back();</script>"
     return redirect('/')
 
+@app.route('/view_bookings',methods = ['POST'])
+def view_bookings():
+    room_id = request.form['room_id']
+    bookings = functions.get_bookings_of_a_room(room_id)
+    return render_template("view_bookings.html",room_id = room_id,bookings = bookings)
+
 @app.route('/',methods = ['POST', 'GET'])
 def root():
     if request.method == 'POST':

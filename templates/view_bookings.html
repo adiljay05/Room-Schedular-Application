@@ -23,42 +23,31 @@
                         <td>Name: {{ session['name'] }}</td>
                         <td>Email: {{ session['email'] }}</td>
                     </tr>
-                    
                 </table>
             </div>
             <hr>
             <div align="center">
-                <table style="width:40%">
-                    <tr>
-                        <td colspan="2">
-                            <form action="/add_room" method="POST">
-                                <input type="submit" value="Add New Room">
-                            </form>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div align="center">
+                <h2>Room {{ room_id }} have following bookings</h2>
                 <table style="width: 40%;">
                     <tr>
-                        <th>Room no.</th>
-                        <th>Actions</th>
+                        <th>Sr No.</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
                     </tr>
-                    {% for r in rooms %}
-                        <tr align="center">
-                            <td>{{ r['room_id'] }}</td>
-                            <td>
-                                <form action="/add_booking" method="POST">
-                                    <input type="hidden" name="room_id" value="{{ r['room_id'] }}">
-                                    <input type="submit" value="Add Booking">
-                                </form>
-                            </td>
-                            <td>
-                                <form action="/view_bookings" method="POST">
-                                    <input type="hidden" name="room_id" value="{{ r['room_id'] }}">
-                                    <input type="submit" value="View Bookings">
-                                </form>
-                            </td>
+                    {% for b in bookings %}
+                        <tr>
+                            <td>{{loop.index}}</td>
+                            <td id="start{{ loop.index }}">{{ b['start_date_time'] }}</td>
+                            <td id="end{{ loop.index }}">{{ b['end_date_time'] }}</td>
+                            <script>
+                                id1 = document.getElementById('start{{ loop.index }}').innerHTML
+                                date = new Date(id1.toString())
+                                document.getElementById('start{{ loop.index }}').innerHTML = date.toString().slice(0,21)
+                                
+                                id2 = document.getElementById('end{{ loop.index }}').innerHTML
+                                date = new Date(id2.toString())
+                                document.getElementById('end{{ loop.index }}').innerHTML = date.toString().slice(0,21)
+                            </script>
                         </tr>
                     {% endfor %}
                 </table>

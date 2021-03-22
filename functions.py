@@ -101,4 +101,14 @@ def add_booking_to_database():
     datastore_client.put(room)
     return data[1]
 
+def get_bookings_of_a_room(room_id):
+    entity_key = datastore_client.key('RoomInfo', room_id)
+    room = datastore_client.get(entity_key)
+    bookings = room['bookings_list']
+    bookings_list = []
+    for b in bookings:
+        e_key = datastore_client.key('BookingInfo', b)
+        bookings_list.append(datastore_client.get(e_key))
+    return bookings_list
+
 
