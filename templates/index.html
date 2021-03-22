@@ -38,6 +38,20 @@
                     </tr>
                 </table>
             </div>
+            <div align="center">
+                <table style="width: 40%;">
+                    <tr>
+                        <th>Room no.</th>
+                        <th>Actions</th>
+                    </tr>
+                    {% for r in rooms %}
+                        <tr>
+                            <td>{{ r['room_id'] }}</td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
 		{% elif error_message %}
 		<p>Error Message: {{ error_message }}</p>
 		{% endif %}

@@ -40,17 +40,19 @@ def root():
     else:
         id_token = request.cookies.get("token")
         error_message = None
+        rooms_list = None
         if id_token:
             try:
                 claims = google.oauth2.id_token.verify_firebase_token(id_token, firebase_request_adapter)
                 session['name'] = claims['name']
                 session['email'] = claims['email']
+                rooms_list = functions.get_all_rooms()
             except ValueError as exc:
                 error_message = str(exc)
         else:
             session['name'] = None
             session['email'] = None
-        return render_template('index.html', error_message=error_message)
+        return render_template('index.html', error_message=error_message, rooms = rooms_list)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)

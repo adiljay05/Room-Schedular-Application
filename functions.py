@@ -43,6 +43,10 @@ def check_room_in_database(room_id):
     query.add_filter('room_id','=',room_id)
     return query.fetch()
 
+def get_all_rooms():
+    query = datastore_client.query(kind = 'RoomInfo')
+    return query.fetch()
+    
 def addBooking():
     room_id = request.form['room_id']
     start_date_time = request.form['start_date_time']
