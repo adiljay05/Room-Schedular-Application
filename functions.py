@@ -8,6 +8,13 @@ from google.auth.transport import requests
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "jawad1.json"
 
+
+app = Flask(__name__)
+app.secret_key = 'assignment2'
+datastore_client = datastore.Client()
+firebase_request_adapter = requests.Request()
+
+
 def authenticateUsers():
     id_token = request.cookies.get("token")
     return google.oauth2.id_token.verify_firebase_token(id_token, firebase_request_adapter)
@@ -22,8 +29,7 @@ def createUserInfo(claims):
     })
     datastore_client.put(entity)
 
-def addRoom():
-    room_id = request.form['room_id']
+def addRoom(room_id):
     entity_key = datastore_client.key('RoomInfo', room_id)
     entity = datastore.Entity(key = entity_key)
     entity.update({
@@ -31,6 +37,11 @@ def addRoom():
         'bookings_list': []
     })
     datastore_client.put(entity)
+
+def check_room_in_database(room_id):
+    query = datastore_client.query(kind = 'RoomInfo')
+    query.add_filter('room_id','=',room_id)
+    return query.fetch()
 
 def addBooking():
     room_id = request.form['room_id']

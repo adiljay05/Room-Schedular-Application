@@ -4,6 +4,7 @@ from google.cloud import datastore
 import google.oauth2.id_token
 from flask import Flask, render_template, request,redirect
 from google.auth.transport import requests
+import functions
 
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "jawad1.json"
@@ -12,6 +13,25 @@ app = Flask(__name__)
 app.secret_key = 'assignment2'
 datastore_client = datastore.Client()
 firebase_request_adapter = requests.Request()
+
+@app.route('/add_room',methods=['POST'])
+def add_room():
+    return render_template('add_room.html')
+
+@app.route('/add_room_to_database',methods = ['POST'])
+def add_room_to_database():
+    room_id = request.form['room_id']
+    room_check_flag = True
+    rooms = functions.check_room_in_database(room_id)
+    for r in rooms:
+        room_check_flag = False
+        break
+    if room_check_flag:
+        functions.addRoom(room_id)
+        return redirect('/')
+    else:
+        return "<script>alert('Room Already Exists'); window.history.back();</script>"
+
 
 @app.route('/',methods = ['POST', 'GET'])
 def root():

@@ -23,16 +23,16 @@
                         <td>Name: {{ session['name'] }}</td>
                         <td>Email: {{ session['email'] }}</td>
                     </tr>
-                    
                 </table>
             </div>
             <hr>
             <div align="center">
-                <table style="width:40%">
+                <table style="width: 40%;">                
                     <tr>
                         <td colspan="2">
-                            <form action="/add_room" method="POST">
-                                <input type="submit" value="Add New Room">
+                            <form action="add_room_to_database" method="POST">
+                                <input type="number" required placeholder="Enter room Number" name="room_id"/>
+                                <input type="submit" value="ADD Room">
                             </form>
                         </td>
                     </tr>
