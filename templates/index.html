@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Welcome to Room Scheduler</title>
+    <script src="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css" />
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <script src="/static/scripts.js"></script>
+</head>
+
+<body>
+    <h1>Welcome to Room Scheduler</h1>
+    <div id="firebase-auth-container"></div>
+    <button id="sign-out" class="btn btn-danger" hidden="true">Sign out</button>
+    <div id="login-info" hidden="true">
+		<hr>
+		{% if session['name'] %}
+            <div align="center">
+                <table class="table" style="width: 40%;">
+                    <tr class="table-success">
+                        <td>Name: {{ session['name'] }}</td>
+                        <td>Email: {{ session['email'] }}</td>
+                    </tr>
+                    <tr>
+                        
+                    </tr>
+                </table>
+            </div>
+            <hr>
+		{% elif error_message %}
+		<p>Error Message: {{ error_message }}</p>
+		{% endif %}
+    </div>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-auth.js"></script>
+<script src="{{ url_for('static', filename='app-setup.js') }}"></script>
+
+</html>
