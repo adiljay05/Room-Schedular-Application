@@ -48,7 +48,28 @@ def add_booking_to_database():
 def view_bookings():
     room_id = request.form['room_id']
     bookings = functions.get_bookings_of_a_room(room_id)
-    return render_template("view_bookings.html",room_id = room_id,bookings = bookings)
+    return render_template("view_bookings.html",msg= "Room "+room_id+" have following bookings",bookings = bookings)
+
+@app.route('/view_user_bookings',methods=['POST'])
+def view_user_bookings():
+    user_info = functions.get_user_data()
+    room = functions.get_all_rooms()
+    user_bookings = []
+    for r in room:
+        bookings_list = r['bookings_list']
+        for b in bookings_list:
+            e_key = datastore_client.key('BookingInfo', b)
+            booking = datastore_client.get(e_key)
+            if booking['booked_by'] == user_info['email']:
+                user_bookings.append(booking)
+    return render_template("show_user_bookings.html",bookings = user_bookings)
+
+@app.route('/search_own_bookings_in_room',methods=['POST'])
+def search_own_bookings_in_room():
+    room_id = request.form['room_id']
+    bookings = functions.get_bookings_of_a_room_of_current_user(room_id)
+    return render_template("view_bookings.html",msg= "You have following bookings in room "+room_id,bookings = bookings)
+
 
 @app.route('/',methods = ['POST', 'GET'])
 def root():

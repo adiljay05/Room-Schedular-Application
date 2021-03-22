@@ -31,6 +31,16 @@ def createUserInfo(claims):
     })
     datastore_client.put(entity)
 
+def get_user_data():
+    id_token = request.cookies.get("token")
+    claims = google.oauth2.id_token.verify_firebase_token(id_token, firebase_request_adapter)
+    return retrieveUserInfo(claims)
+
+def retrieveUserInfo(claims):
+    entity_key = datastore_client.key('UserInfo', claims['email'])
+    entity = datastore_client.get(entity_key)
+    return entity
+
 def addRoom(room_id):
     entity_key = datastore_client.key('RoomInfo', room_id)
     entity = datastore.Entity(key = entity_key)
@@ -111,4 +121,14 @@ def get_bookings_of_a_room(room_id):
         bookings_list.append(datastore_client.get(e_key))
     return bookings_list
 
-
+def get_bookings_of_a_room_of_current_user(room_id):
+    entity_key = datastore_client.key('RoomInfo', room_id)
+    room = datastore_client.get(entity_key)
+    bookings = room['bookings_list']
+    bookings_list = []
+    for b in bookings:
+        e_key = datastore_client.key('BookingInfo', b)
+        booking = datastore_client.get(e_key)
+        if session['email'] == booking['booked_by']:
+            bookings_list.append(booking)
+    return bookings_list

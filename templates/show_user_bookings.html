@@ -27,12 +27,23 @@
             </div>
             <hr>
             <div align="center">
-                <h2>{{ msg }}</h2>
+                <table style="width: 40%;">
+                    <tr>
+                        <form action="/search_own_bookings_in_room" method="POST">
+                            <td>Enter Room No:</td>
+                            <td><input type="number" placeholder="Room Number" required name="room_id"></td>
+                            <td><input type="submit" value="Search"></td>
+                        </form>
+                    </tr>
+                </table>
+            </div>
+            <div align="center">
                 <table style="width: 40%;">
                     <tr>
                         <th>Sr No.</th>
                         <th>Start Time</th>
                         <th>End Time</th>
+                        <th>Room No.</th>
                     </tr>
                     {% for b in bookings %}
                         <tr>
@@ -48,6 +59,7 @@
                                 date = new Date(id2.toString())
                                 document.getElementById('end{{ loop.index }}').innerHTML = date.toString().slice(0,21)
                             </script>
+                            <td>{{ b['room_id'] }}</td>
                         </tr>
                     {% endfor %}
                 </table>
