@@ -7,7 +7,6 @@
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css" />
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
-    <script src="/static/scripts.js"></script>
 </head>
 
 <body>
@@ -23,46 +22,46 @@
                         <td>Name: {{ session['name'] }}</td>
                         <td>Email: {{ session['email'] }}</td>
                     </tr>
-                    
                 </table>
             </div>
             <hr>
             <div align="center">
-                <table style="width:40%">
-                    <tr>
-                        <td colspan="2">
-                            <form action="/add_room" method="POST">
-                                <input type="submit" value="Add New Room">
-                            </form>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div align="center">
-                <table style="width: 40%;">
-                    <tr>
-                        <th>Room no.</th>
-                        <th>Actions</th>
-                    </tr>
-                    {% for r in rooms %}
-                        <tr align="center">
-                            <td>{{ r['room_id'] }}</td>
-                            <td><form action="/add_booking" method="POST">
-                                <input type="hidden" name="room_id" value="{{ r['room_id'] }}">
-                                <input type="submit" value="Add Booking">
-                            </form></td>
+                <form action="/add_booking_to_database" method="POST">
+                    <h2>Add Booking to Room No. {{ room_id }}</h2>
+                    <table style="width: 40%;">
+                        <tr>
+                            <td>
+                                <input type="hidden" name="room_id" value="{{ room_id }}">
+                                Start Date & time:
+                            </td>
+                            <td><input type="datetime-local" id="start_date_time" name="start_date_time"></td>                        
                         </tr>
-                    {% endfor %}
-                </table>
+                        <tr>
+                            <td>End Date & time: </td>
+                            <td><input type="datetime-local" name="end_date_time" id="end_date_time"></td>                            
+                        </tr>
+                        <script>
+                            var now = new Date();
+                            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                            document.getElementById('start_date_time').min = now.toISOString().slice(0,16);
+                            document.getElementById('end_date_time').min = now.toISOString().slice(0,16);
+                        </script>
+                        <tr>
+                            <td colspan="2">
+                                <input type="submit" value="Add Booking">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
             </div>
 		{% elif error_message %}
 		<p>Error Message: {{ error_message }}</p>
 		{% endif %}
     </div>
 </body>
-
 <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-auth.js"></script>
 <script src="{{ url_for('static', filename='app-setup.js') }}"></script>
+<script src="/static/scripts.js"></script>
 
 </html>

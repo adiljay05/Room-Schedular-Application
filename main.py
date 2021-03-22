@@ -32,6 +32,17 @@ def add_room_to_database():
     else:
         return "<script>alert('Room Already Exists'); window.history.back();</script>"
 
+@app.route('/add_booking',methods = ['POST'])
+def add_booking():
+    room_id = request.form['room_id']
+    return render_template('add_booking.html',room_id = room_id)
+
+@app.route('/add_booking_to_database',methods=['POST'])
+def add_booking_to_database():
+    check = functions.add_booking_to_database()
+    if check == "error":
+        return "<script>alert('Booking is overlapping, Please select another time'); window.history.back();</script>"
+    return redirect('/')
 
 @app.route('/',methods = ['POST', 'GET'])
 def root():
