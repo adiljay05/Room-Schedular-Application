@@ -81,8 +81,12 @@ def search_own_bookings_in_room():
 
 @app.route('/delete_booking',methods = ['POST'])
 def delete_booking():
+    request_from = request.form['request_from']
     room_id = functions.delete_booking()
-    return view_user_bookings()
+    if request_from == "room_bookings":
+        return view_bookings()
+    else:
+        return view_user_bookings()
 
 @app.route('/edit_booking',methods = ['POST'])
 def edit_booking():
@@ -104,6 +108,20 @@ def search_using_filter():
     bookings_list = sorted(bookings_list,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
     return render_template("view_bookings.html",msg= "Bookings in Given Range",bookings = bookings_list)
 
+@app.route('/delete_room',methods = ['POST'])
+def delete_room():
+    room_id = request.form['room_id']
+    bookings = functions.get_bookings_of_a_room(room_id)
+    empty_flag = True
+    for b in bookings:
+        empty_flag = False
+    if not empty_flag:
+        #room has bookings
+        return "<script>alert('Room have booking(s), Please delete all bookings first'); window.history.back();</script>"
+    else:
+        #room is empty
+        functions.delete_room(room_id)
+    return redirect('/')
 
 @app.route('/',methods = ['POST', 'GET'])
 def root():

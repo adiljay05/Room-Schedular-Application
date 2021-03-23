@@ -211,4 +211,6 @@ def search_using_filter():
     
     return bookings_list
 
-
+def delete_room(room_id):
+    entity_key = datastore_client.key('RoomInfo', room_id)
+    datastore_client.delete(entity_key)

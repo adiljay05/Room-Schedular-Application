@@ -99,6 +99,12 @@
                                     <input type="submit" class="btn btn-info form-control" value="View Bookings">
                                 </form>
                             </td>
+                            <td>
+                                <form action="/delete_room" method="POST">
+                                    <input type="hidden" name="room_id" value="{{ r['room_id'] }}">
+                                    <input type="submit" class="btn btn-danger form-control" value="Delete Room">
+                                </form>
+                            </td>
                         </tr>
                     {% endfor %}
                 </table>

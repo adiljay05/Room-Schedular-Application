@@ -80,6 +80,7 @@
                                 <td>
                                     <form action="/delete_booking" method="POST">
                                         <input type="hidden" name="booking_id" value="{{ b.key.id }}">
+                                        <input type="hidden" name="request_from" value="room_bookings">
                                         <input type="hidden" name="room_id" value="{{ b['room_id'] }}">
                                         <input type="submit" class="btn btn-danger forom-control" value="Delete">
                                     </form>                            
