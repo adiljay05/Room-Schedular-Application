@@ -3,6 +3,10 @@
 
 <head>
     <title>Welcome to Room Scheduler</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.js"></script>
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css" />
     <script src="{{ url_for('static', filename='script.js') }}"></script>
@@ -10,7 +14,7 @@
     <script src="/static/scripts.js"></script>
 </head>
 
-<body>
+<body class="bg-light">
     <h1>Welcome to Room Scheduler</h1>
     <div id="firebase-auth-container"></div>
     <button id="sign-out" class="btn btn-danger" hidden="true">Sign out</button>
@@ -27,14 +31,35 @@
             </div>
             <hr>
             <div align="center">
+                <table class="table" style="width:40%">
+                    <tr class="table-warning">
+                        <td colspan="2">
+                            <form action="/add_room" method="POST">
+                                <input class="btn btn-warning form-control" type="submit" value="Add New Room">
+                            </form>
+                        </td>
+                        <td>
+                            <form action="/view_user_bookings" method="POST">
+                                <input class="btn btn-warning form-control" type="submit" value="Query Your Bookings">
+                            </form>
+                        </td>
+                        <td>
+                            <form action="/" method="GET">
+                                <input class="btn btn-warning form-control" type="submit" value="Back to Home">
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div align="center">
                 <h2>{{ msg }}</h2>
-                <table style="width: 40%;">
+                <table class="table table-bordered table-dark" style="width: 50%;text-align: center;">
                     <tr>
                         <th>Sr No.</th>
                         <th>Start Time</th>
                         <th>End Time</th>
                         <th>Room No.</th>
-                        <th>Actions</th>
+                        <th colspan="2">Actions</th>
                     </tr>
                     {% for b in bookings %}
                         <tr>
@@ -56,14 +81,14 @@
                                     <form action="/delete_booking" method="POST">
                                         <input type="hidden" name="booking_id" value="{{ b.key.id }}">
                                         <input type="hidden" name="room_id" value="{{ b['room_id'] }}">
-                                        <input type="submit" value="Delete">
+                                        <input type="submit" class="btn btn-danger forom-control" value="Delete">
                                     </form>                            
                                 </td>
                                 <td>
                                     <form action="/edit_booking" method="POST">
                                         <input type="hidden" name="booking_id" value="{{ b.key.id }}">
                                         <input type="hidden" name="room_id" value="{{ b['room_id'] }}">
-                                        <input type="submit" value="Edit">
+                                        <input type="submit" class="btn btn-info form-control" value="Edit">
                                     </form>                            
                                 </td>
                             {% endif %}

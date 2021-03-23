@@ -3,6 +3,10 @@
 
 <head>
     <title>Welcome to Room Scheduler</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.js"></script>
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css" />
     <script src="{{ url_for('static', filename='script.js') }}"></script>
@@ -26,9 +30,30 @@
             </div>
             <hr>
             <div align="center">
-                <form action="/add_booking_to_database" method="POST">
+                <table class="table" style="width:40%">
+                    <tr class="table-warning">
+                        <td colspan="2">
+                            <form action="/add_room" method="POST">
+                                <input class="btn btn-warning form-control" type="submit" value="Add New Room">
+                            </form>
+                        </td>
+                        <td>
+                            <form action="/view_user_bookings" method="POST">
+                                <input class="btn btn-warning form-control" type="submit" value="Query Your Bookings">
+                            </form>
+                        </td>
+                        <td>
+                            <form action="/" method="GET">
+                                <input class="btn btn-warning form-control" type="submit" value="Back to Home">
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div align="center">
+                <form style="border: 1px solid black; width: 40%;" action="/add_booking_to_database" method="POST">
                     <h2>Add Booking to Room No. {{ room_id }}</h2>
-                    <table style="width: 40%;">
+                    <table class="table table-active">
                         <tr>
                             <td>
                                 <input type="hidden" name="room_id" value="{{ room_id }}">
@@ -48,7 +73,7 @@
                         </script>
                         <tr>
                             <td colspan="2">
-                                <input type="submit" value="Add Booking">
+                                <input class="btn btn-info form-control" type="submit" value="Add Booking">
                             </td>
                         </tr>
                     </table>
