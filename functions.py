@@ -132,3 +132,25 @@ def get_bookings_of_a_room_of_current_user(room_id):
         if session['email'] == booking['booked_by']:
             bookings_list.append(booking)
     return bookings_list
+
+def delete_booking():
+    booking_id = request.form['booking_id']
+    room_id = request.form['room_id']
+    booking_key = datastore_client.key('BookingInfo', int(booking_id))
+    datastore_client.delete(booking_key)
+    room_key = datastore_client.key('RoomInfo',room_id)
+    room = datastore_client.get(room_key)
+    bookings_list = room['bookings_list']
+    i = 0
+    for b in bookings_list:
+        if str(b) == booking_id:
+            break
+        i = i + 1
+    bookings_list.pop(i)
+    room.update({
+        'bookings_list':bookings_list
+    })
+    datastore_client.put(room)
+    return room_id
+
+

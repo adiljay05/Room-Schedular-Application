@@ -5,6 +5,7 @@ import google.oauth2.id_token
 from flask import Flask, render_template, request,redirect
 from google.auth.transport import requests
 import functions
+from datetime import timedelta
 
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "jawad1.json"
@@ -13,6 +14,10 @@ app = Flask(__name__)
 app.secret_key = 'assignment2'
 datastore_client = datastore.Client()
 firebase_request_adapter = requests.Request()
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=60)
 
 @app.route('/add_room',methods=['POST'])
 def add_room():
@@ -68,8 +73,12 @@ def view_user_bookings():
 def search_own_bookings_in_room():
     room_id = request.form['room_id']
     bookings = functions.get_bookings_of_a_room_of_current_user(room_id)
-    return render_template("view_bookings.html",msg= "You have following bookings in room "+room_id,bookings = bookings)
+    return render_template("show_user_bookings.html",bookings = bookings)
 
+@app.route('/delete_booking',methods = ['POST'])
+def delete_booking():
+    room_id = functions.delete_booking()
+    return view_user_bookings()
 
 @app.route('/',methods = ['POST', 'GET'])
 def root():

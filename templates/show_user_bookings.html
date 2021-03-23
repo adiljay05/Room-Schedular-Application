@@ -60,6 +60,20 @@
                                 document.getElementById('end{{ loop.index }}').innerHTML = date.toString().slice(0,21)
                             </script>
                             <td>{{ b['room_id'] }}</td>
+                            <td>
+                                <form action="/delete_booking" method="POST">
+                                    <input type="hidden" name="booking_id" value="{{ b.key.id }}">
+                                    <input type="hidden" name="room_id" value="{{ b['room_id'] }}">
+                                    <input type="submit" value="Delete">
+                                </form>                            
+                            </td>
+                            <td>
+                                <form action="/edit_booking" method="POST">
+                                    <input type="hidden" name="booking_id" value="{{ b.key.id }}">
+                                    <input type="hidden" name="room_id" value="{{ b['room_id'] }}">
+                                    <input type="submit" value="Edit">
+                                </form>                            
+                            </td>
                         </tr>
                     {% endfor %}
                 </table>
