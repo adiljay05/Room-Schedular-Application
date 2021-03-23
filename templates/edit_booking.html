@@ -12,6 +12,19 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
     <script src="/static/scripts.js"></script>
+    <script>
+        function validate_values(event){
+            st = document.getElementById('start_date_time').value
+            end = document.getElementById('end_date_time').value
+            st_date = new Date(st)
+            end_date = new Date(end)
+            if (end_date < st_date) {
+                alert("End date-time cannot be less than start date-time");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 
 <body>
@@ -77,7 +90,7 @@
                         </script>
                         <tr>
                             <td colspan="2">
-                                <input type="submit" class="form-control btn btn-info" value="Update">
+                                <input type="submit" class="form-control btn btn-info" onclick="return validate_values(event)" value="Update">
                             </td>
                         </tr>
                     </table>

@@ -11,6 +11,19 @@
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css" />
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <script>
+        function validate_values(event){
+            st = document.getElementById('start_date_time').value
+            end = document.getElementById('end_date_time').value
+            st_date = new Date(st)
+            end_date = new Date(end)
+            if (end_date < st_date) {
+                alert("End date-time cannot be less than start date-time");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 
 <body>
@@ -59,11 +72,11 @@
                                 <input type="hidden" name="room_id" value="{{ room_id }}">
                                 Start Date & time:
                             </td>
-                            <td><input type="datetime-local" id="start_date_time" name="start_date_time"></td>                        
+                            <td><input type="datetime-local" required id="start_date_time" name="start_date_time"></td>                        
                         </tr>
                         <tr>
                             <td>End Date & time: </td>
-                            <td><input type="datetime-local" name="end_date_time" id="end_date_time"></td>                            
+                            <td><input type="datetime-local" required name="end_date_time" id="end_date_time"></td>                            
                         </tr>
                         <script>
                             var now = new Date();
@@ -73,7 +86,7 @@
                         </script>
                         <tr>
                             <td colspan="2">
-                                <input class="btn btn-info form-control" type="submit" value="Add Booking">
+                                <input class="btn btn-info form-control" onclick="return validate_values(event)" type="submit" value="Add Booking">
                             </td>
                         </tr>
                     </table>
