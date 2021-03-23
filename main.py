@@ -20,12 +20,16 @@ def make_session_permanent():
     session.permanent = True
     app.permanent_session_lifetime = timedelta(minutes=60)
 
-@app.route('/add_room',methods=['POST'])
+@app.route('/add_room',methods=['POST','GET'])
 def add_room():
+    if request.method == 'GET':
+        return root()
     return render_template('add_room.html')
 
-@app.route('/add_room_to_database',methods = ['POST'])
+@app.route('/add_room_to_database',methods = ['POST','GET'])
 def add_room_to_database():
+    if request.method == 'GET':
+        return root()
     room_id = request.form['room_id']
     room_check_flag = True
     rooms = functions.check_room_in_database(room_id)
@@ -38,27 +42,35 @@ def add_room_to_database():
     else:
         return "<script>alert('Room Already Exists'); window.history.back();</script>"
 
-@app.route('/add_booking',methods = ['POST'])
+@app.route('/add_booking',methods = ['POST','GET'])
 def add_booking():
+    if request.method == 'GET':
+        return root()
     room_id = request.form['room_id']
     return render_template('add_booking.html',room_id = room_id)
 
-@app.route('/add_booking_to_database',methods=['POST'])
+@app.route('/add_booking_to_database',methods=['POST','GET'])
 def add_booking_to_database():
+    if request.method == 'GET':
+        return root()
     check = functions.add_booking_to_database()
     if check == "error":
         return "<script>alert('Booking is overlapping, Please select another time'); window.history.back();</script>"
     return redirect('/')
 
-@app.route('/view_bookings',methods = ['POST'])
+@app.route('/view_bookings',methods = ['POST','GET'])
 def view_bookings():
+    if request.method == 'GET':
+        return root()
     room_id = request.form['room_id']
     bookings = functions.get_bookings_of_a_room(room_id)
     bookings = sorted(bookings,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
     return render_template("view_bookings.html",msg= "Room "+room_id+" have following bookings",bookings = bookings)
 
-@app.route('/view_user_bookings',methods=['POST'])
+@app.route('/view_user_bookings',methods=['POST','GET'])
 def view_user_bookings():
+    if request.method == 'GET':
+        return root()
     user_info = functions.get_user_data()
     room = functions.get_all_rooms()
     user_bookings = []
@@ -72,15 +84,19 @@ def view_user_bookings():
     user_bookings = sorted(user_bookings,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
     return render_template("show_user_bookings.html",bookings = user_bookings)
 
-@app.route('/search_own_bookings_in_room',methods=['POST'])
+@app.route('/search_own_bookings_in_room',methods=['POST','GET'])
 def search_own_bookings_in_room():
+    if request.method == 'GET':
+        return root()
     room_id = request.form['room_id']
     bookings = functions.get_bookings_of_a_room_of_current_user(room_id)
     bookings = sorted(bookings,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
     return render_template("show_user_bookings.html",bookings = bookings)
 
-@app.route('/delete_booking',methods = ['POST'])
+@app.route('/delete_booking',methods = ['POST','GET'])
 def delete_booking():
+    if request.method == 'GET':
+        return root()
     request_from = request.form['request_from']
     room_id = functions.delete_booking()
     if request_from == "room_bookings":
@@ -88,28 +104,36 @@ def delete_booking():
     else:
         return view_user_bookings()
 
-@app.route('/edit_booking',methods = ['POST'])
+@app.route('/edit_booking',methods = ['POST','GET'])
 def edit_booking():
+    if request.method == 'GET':
+        return root()
     booking_id = request.form['booking_id']
     booking_key = datastore_client.key('BookingInfo', int(booking_id))
     booking = datastore_client.get(booking_key)
     return render_template('edit_booking.html',booking = booking)
 
-@app.route('/edit_booking_in_database',methods = ['POST'])
+@app.route('/edit_booking_in_database',methods = ['POST','GET'])
 def edit_booking_in_database():
+    if request.method == 'GET':
+        return root()
     if functions.edit_booking_in_database():
         return redirect('/')
     else:
         return "<script>alert('Booking is overlapping, Please select another time'); window.history.back();</script>"
 
-@app.route('/search_using_filter',methods= ['POST'])
+@app.route('/search_using_filter',methods= ['POST','GET'])
 def search_using_filter():
+    if request.method == 'GET':
+        return root()
     bookings_list = functions.search_using_filter()
     bookings_list = sorted(bookings_list,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
     return render_template("view_bookings.html",msg= "Bookings in Given Range",bookings = bookings_list)
 
-@app.route('/delete_room',methods = ['POST'])
+@app.route('/delete_room',methods = ['POST','GET'])
 def delete_room():
+    if request.method == 'GET':
+        return root()
     room_id = request.form['room_id']
     bookings = functions.get_bookings_of_a_room(room_id)
     empty_flag = True
