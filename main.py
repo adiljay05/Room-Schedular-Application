@@ -6,6 +6,7 @@ from flask import Flask, render_template, request,redirect
 from google.auth.transport import requests
 import functions
 from datetime import timedelta
+from datetime import datetime
 
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "jawad1.json"
@@ -53,6 +54,7 @@ def add_booking_to_database():
 def view_bookings():
     room_id = request.form['room_id']
     bookings = functions.get_bookings_of_a_room(room_id)
+    bookings = sorted(bookings,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
     return render_template("view_bookings.html",msg= "Room "+room_id+" have following bookings",bookings = bookings)
 
 @app.route('/view_user_bookings',methods=['POST'])
@@ -67,12 +69,14 @@ def view_user_bookings():
             booking = datastore_client.get(e_key)
             if booking['booked_by'] == user_info['email']:
                 user_bookings.append(booking)
+    user_bookings = sorted(user_bookings,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
     return render_template("show_user_bookings.html",bookings = user_bookings)
 
 @app.route('/search_own_bookings_in_room',methods=['POST'])
 def search_own_bookings_in_room():
     room_id = request.form['room_id']
     bookings = functions.get_bookings_of_a_room_of_current_user(room_id)
+    bookings = sorted(bookings,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
     return render_template("show_user_bookings.html",bookings = bookings)
 
 @app.route('/delete_booking',methods = ['POST'])
@@ -97,6 +101,7 @@ def edit_booking_in_database():
 @app.route('/search_using_filter',methods= ['POST'])
 def search_using_filter():
     bookings_list = functions.search_using_filter()
+    bookings_list = sorted(bookings_list,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
     return render_template("view_bookings.html",msg= "Bookings in Given Range",bookings = bookings_list)
 
 
