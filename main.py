@@ -94,6 +94,12 @@ def edit_booking_in_database():
     else:
         return "<script>alert('Booking is overlapping, Please select another time'); window.history.back();</script>"
 
+@app.route('/search_using_filter',methods= ['POST'])
+def search_using_filter():
+    bookings_list = functions.search_using_filter()
+    return render_template("view_bookings.html",msg= "Bookings in Given Range",bookings = bookings_list)
+
+
 @app.route('/',methods = ['POST', 'GET'])
 def root():
     if request.method == 'POST':

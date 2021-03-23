@@ -43,6 +43,34 @@
                     </tr>
                 </table>
             </div>
+            <div align= "center">
+                <form action="/search_using_filter" method="POST">
+                    <table style="width: 40%;">
+                        <tr>
+                            <td>
+                                <input type="hidden" name="room_id" value="{{ room_id }}">
+                                Start Date & time:
+                            </td>
+                            <td><input type="datetime-local" id="start_date_time" name="start_date_time"></td>                        
+                        </tr>
+                        <tr>
+                            <td>End Date & time: </td>
+                            <td><input type="datetime-local" name="end_date_time" id="end_date_time"></td>                            
+                        </tr>
+                        <script>
+                            var now = new Date();
+                            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                            document.getElementById('start_date_time').min = now.toISOString().slice(0,16);
+                            document.getElementById('end_date_time').min = now.toISOString().slice(0,16);
+                        </script>
+                        <tr>
+                            <td colspan="2">
+                                <input type="submit" value="Search">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
             <div align="center">
                 <table style="width: 40%;">
                     <tr>

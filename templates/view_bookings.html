@@ -33,6 +33,8 @@
                         <th>Sr No.</th>
                         <th>Start Time</th>
                         <th>End Time</th>
+                        <th>Room No.</th>
+                        <th>Actions</th>
                     </tr>
                     {% for b in bookings %}
                         <tr>
@@ -48,6 +50,23 @@
                                 date = new Date(id2.toString())
                                 document.getElementById('end{{ loop.index }}').innerHTML = date.toString().slice(0,21)
                             </script>
+                            <td>{{ b['room_id'] }}</td>
+                            {% if b['booked_by'] == session['email'] %}
+                                <td>
+                                    <form action="/delete_booking" method="POST">
+                                        <input type="hidden" name="booking_id" value="{{ b.key.id }}">
+                                        <input type="hidden" name="room_id" value="{{ b['room_id'] }}">
+                                        <input type="submit" value="Delete">
+                                    </form>                            
+                                </td>
+                                <td>
+                                    <form action="/edit_booking" method="POST">
+                                        <input type="hidden" name="booking_id" value="{{ b.key.id }}">
+                                        <input type="hidden" name="room_id" value="{{ b['room_id'] }}">
+                                        <input type="submit" value="Edit">
+                                    </form>                            
+                                </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </table>

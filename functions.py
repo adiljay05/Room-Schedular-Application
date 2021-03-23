@@ -187,3 +187,28 @@ def edit_booking_in_database():
         return True
     else:
         return False
+
+def search_using_filter():
+    start_date_time = request.form['start_date_time']
+    end_date_time = request.form['end_date_time']
+
+    start_time = datetime.strptime(start_date_time, '%Y-%m-%dT%H:%M')
+    end_time = datetime.strptime(end_date_time, '%Y-%m-%dT%H:%M')
+
+    query = datastore_client.query(kind='RoomInfo')
+    rooms = query.fetch()
+
+    bookings_list = []
+    for r in rooms:
+        bookings = r['bookings_list']
+        for b in bookings:
+            e_key = datastore_client.key('BookingInfo', b)
+            booking = datastore_client.get(e_key)
+            st_time = datetime.strptime(booking['start_date_time'], '%Y-%m-%dT%H:%M')
+            en_time = datetime.strptime(booking['end_date_time'], '%Y-%m-%dT%H:%M')
+            if st_time>start_time and en_time<end_time:
+                bookings_list.append(booking)
+    
+    return bookings_list
+
+
