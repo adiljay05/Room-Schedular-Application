@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Welcome to Room Scheduler</title>
+    <script src="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css" />
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <script src="/static/scripts.js"></script>
+</head>
+
+<body>
+    <h1>Welcome to Room Scheduler</h1>
+    <div id="firebase-auth-container"></div>
+    <button id="sign-out" class="btn btn-danger" hidden="true">Sign out</button>
+    <div id="login-info" hidden="true">
+		<hr>
+		{% if session['name'] %}
+            <div align="center">
+                <table class="table" style="width: 40%;">
+                    <tr class="table-success">
+                        <td>Name: {{ session['name'] }}</td>
+                        <td>Email: {{ session['email'] }}</td>
+                    </tr>
+                </table>
+            </div>
+            <hr>
+            <div align= "center">
+                <form action="/edit_booking_in_database" method="POST">
+                    <input type="hidden" name="booking_id" value="{{ booking.key.id }}">
+                    <input type="hidden" name="room_id" value="{{ booking['room_id'] }}">
+                    <table style="width: 40%;">
+                        <tr>
+                            <td>Start Time: </td>
+                            <td>
+                                <input type="datetime-local" id="start_date_time" name="start_date_time" value="{{ booking['start_date_time'] }}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>End Time:</td>
+                            <td>
+                                <input type="datetime-local" id="end_date_time" name="end_date_time" value="{{ booking['end_date_time'] }}">
+                            </td>
+                        </tr>
+                        <script>
+                            var now = new Date();
+                            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                            document.getElementById('start_date_time').min = now.toISOString().slice(0,16);
+                            document.getElementById('end_date_time').min = now.toISOString().slice(0,16);
+                        </script>
+                        <tr>
+                            <td colspan="2">
+                                <input type="submit" value="Update">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+		{% elif error_message %}
+		<p>Error Message: {{ error_message }}</p>
+		{% endif %}
+    </div>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-auth.js"></script>
+<script src="{{ url_for('static', filename='app-setup.js') }}"></script>
+
+</html>

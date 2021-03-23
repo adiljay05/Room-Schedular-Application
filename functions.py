@@ -153,4 +153,37 @@ def delete_booking():
     datastore_client.put(room)
     return room_id
 
+def check_boookings_of_a_room_for_edit(room_id,start_time1,end_time1,booking_id):
+    entity_key = datastore_client.key('RoomInfo', room_id)
+    room = datastore_client.get(entity_key)
+    bookings_list = room['bookings_list']
+    start_time = datetime.strptime(start_time1, '%Y-%m-%dT%H:%M')
+    end_time = datetime.strptime(end_time1, '%Y-%m-%dT%H:%M')
+    for b in bookings_list:
+        if str(b) == booking_id:
+            continue
+        e_key = datastore_client.key('BookingInfo', b)
+        booking = datastore_client.get(e_key)
+        st_time = datetime.strptime(booking['start_date_time'], '%Y-%m-%dT%H:%M')
+        en_time = datetime.strptime(booking['end_date_time'], '%Y-%m-%dT%H:%M')
+        if start_time > st_time and start_time < en_time:
+            return False
+        if end_time > st_time and end_time < en_time:
+            return False
+    return True
 
+def edit_booking_in_database():
+    room_id = request.form['room_id']
+    booking_id = request.form['booking_id']
+    start_date_time = request.form['start_date_time']
+    end_date_time = request.form['end_date_time']
+
+    if check_boookings_of_a_room_for_edit(room_id,start_date_time,end_date_time,booking_id):
+        booking_key = datastore_client.key('BookingInfo', int(booking_id))
+        booking = datastore_client.get(booking_key)
+        booking['start_date_time'] = start_date_time
+        booking['end_date_time'] = end_date_time
+        datastore_client.put(booking)
+        return True
+    else:
+        return False

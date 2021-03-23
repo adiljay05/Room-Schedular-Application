@@ -80,6 +80,20 @@ def delete_booking():
     room_id = functions.delete_booking()
     return view_user_bookings()
 
+@app.route('/edit_booking',methods = ['POST'])
+def edit_booking():
+    booking_id = request.form['booking_id']
+    booking_key = datastore_client.key('BookingInfo', int(booking_id))
+    booking = datastore_client.get(booking_key)
+    return render_template('edit_booking.html',booking = booking)
+
+@app.route('/edit_booking_in_database',methods = ['POST'])
+def edit_booking_in_database():
+    if functions.edit_booking_in_database():
+        return redirect('/')
+    else:
+        return "<script>alert('Booking is overlapping, Please select another time'); window.history.back();</script>"
+
 @app.route('/',methods = ['POST', 'GET'])
 def root():
     if request.method == 'POST':
