@@ -8,8 +8,6 @@ import functions
 from datetime import timedelta
 from datetime import datetime
 
-import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "jawad1.json"
 
 app = Flask(__name__)
 app.secret_key = 'assignment2'
@@ -40,7 +38,7 @@ def add_room_to_database():
         functions.addRoom(room_id)
         return redirect('/')
     else:
-        return "<script>alert('Room Already Exists'); window.history.back();</script>"
+        return "<h1>Room Already Exists</h1><br><form action='/add_room' method='post'><input type='submit' value='Click to go back'></form>"
 
 @app.route('/add_booking',methods = ['POST','GET'])
 def add_booking():

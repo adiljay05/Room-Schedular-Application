@@ -61,6 +61,11 @@
                         <th>Room No.</th>
                         <th colspan="2">Actions</th>
                     </tr>
+                    {% if not bookings %}
+                        <tr>
+                            <td colspan="6">Sorry No Record Found</td>
+                        </tr>
+                    {% endif %}
                     {% for b in bookings %}
                         <tr>
                             <td>{{loop.index}}</td>
