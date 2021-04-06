@@ -8,7 +8,7 @@ import random
 from datetime import datetime
 
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "jawad1.json"
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "jawad1.json"
 
 
 app = Flask(__name__)

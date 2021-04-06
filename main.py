@@ -159,8 +159,8 @@ def root():
                 session['name'] = claims['name']
                 session['email'] = claims['email']
                 user_info = functions.get_user_data()
-            if user_info == None:
-                functions.createUserInfo(claims)
+                if user_info == None:
+                    functions.createUserInfo(claims)
                 rooms_list = functions.get_all_rooms()
             except ValueError as exc:
                 error_message = str(exc)
