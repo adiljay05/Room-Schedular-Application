@@ -59,12 +59,10 @@ def get_all_rooms():
     query = datastore_client.query(kind = 'RoomInfo')
     return query.fetch()
 
-def check_boookings_of_a_room(room_id,start_time1,end_time1):
+def check_boookings_of_a_room(room_id,start_time,end_time):
     entity_key = datastore_client.key('RoomInfo', room_id)
     room = datastore_client.get(entity_key)
     bookings_list = room['bookings_list']
-    start_time = datetime.strptime(start_time1, '%Y-%m-%dT%H:%M')
-    end_time = datetime.strptime(end_time1, '%Y-%m-%dT%H:%M')
     for b in bookings_list:
         e_key = datastore_client.key('BookingInfo', b)
         booking = datastore_client.get(e_key)
@@ -76,9 +74,7 @@ def check_boookings_of_a_room(room_id,start_time1,end_time1):
             return False
     return True
 
-def validate_dates(start_date_time,end_date_time):
-    start_time = datetime.strptime(start_date_time, '%Y-%m-%dT%H:%M')
-    end_time = datetime.strptime(end_date_time, '%Y-%m-%dT%H:%M')
+def validate_dates(start_time,end_time):
     if end_time<start_time:
         return False
     return True
@@ -87,8 +83,12 @@ def addBooking():
     room_id = request.form['room_id']
     start_date_time = request.form['start_date_time']
     end_date_time = request.form['end_date_time']
-    if validate_dates(start_date_time,end_date_time):
-        if check_boookings_of_a_room(room_id,start_date_time,end_date_time):
+
+    start_time = datetime.strptime(start_date_time, '%Y-%m-%dT%H:%M')
+    end_time = datetime.strptime(end_date_time, '%Y-%m-%dT%H:%M')
+
+    if validate_dates(start_time,end_time):
+        if check_boookings_of_a_room(room_id,start_time,end_time):
             booking_id = random.getrandbits(63)
 
             entity_key = datastore_client.key('BookingInfo', booking_id)
@@ -130,17 +130,19 @@ def get_bookings_of_a_room(room_id):
         bookings_list.append(datastore_client.get(e_key))
     return bookings_list
 
-def get_bookings_of_a_room_of_current_user(room_id):
+def check_if_room_bookings_are_empty(room_id):
     entity_key = datastore_client.key('RoomInfo', room_id)
     room = datastore_client.get(entity_key)
     bookings = room['bookings_list']
-    bookings_list = []
-    for b in bookings:
-        e_key = datastore_client.key('BookingInfo', b)
-        booking = datastore_client.get(e_key)
-        if session['email'] == booking['booked_by']:
-            bookings_list.append(booking)
-    return bookings_list
+    if bookings == []:
+        return True
+    return False
+
+def get_bookings_of_a_room_of_current_user(room_id):
+    query = datastore_client.query(kind='BookingInfo')
+    query.add_filter('booked_by','=',session['email'])
+    query.add_filter('room_id','=',room_id)
+    return query.fetch()
 
 def delete_booking():
     booking_id = request.form['booking_id']
@@ -186,7 +188,11 @@ def edit_booking_in_database():
     booking_id = request.form['booking_id']
     start_date_time = request.form['start_date_time']
     end_date_time = request.form['end_date_time']
-    if validate_dates(start_date_time,end_date_time):
+
+    start_time = datetime.strptime(start_time1, '%Y-%m-%dT%H:%M')
+    end_time = datetime.strptime(end_time1, '%Y-%m-%dT%H:%M')
+
+    if validate_dates(start_time,end_time):
         if check_boookings_of_a_room_for_edit(room_id,start_date_time,end_date_time,booking_id):
             booking_key = datastore_client.key('BookingInfo', int(booking_id))
             booking = datastore_client.get(booking_key)
@@ -206,19 +212,15 @@ def search_using_filter():
         start_time = datetime.strptime(start_date_time, '%Y-%m-%dT%H:%M')
         end_time = datetime.strptime(end_date_time, '%Y-%m-%dT%H:%M')
 
-        query = datastore_client.query(kind='RoomInfo')
-        rooms = query.fetch()
+        query = datastore_client.query(kind='BookingInfo')
+        all_bookings = query.fetch()
 
         bookings_list = []
-        for r in rooms:
-            bookings = r['bookings_list']
-            for b in bookings:
-                e_key = datastore_client.key('BookingInfo', b)
-                booking = datastore_client.get(e_key)
-                st_time = datetime.strptime(booking['start_date_time'], '%Y-%m-%dT%H:%M')
-                en_time = datetime.strptime(booking['end_date_time'], '%Y-%m-%dT%H:%M')
-                if st_time>start_time and en_time<end_time:
-                    bookings_list.append(booking)
+        for b in all_bookings:
+            st_time = datetime.strptime(b['start_date_time'], '%Y-%m-%dT%H:%M')
+            en_time = datetime.strptime(b['end_date_time'], '%Y-%m-%dT%H:%M')
+            if st_time>start_time and en_time<end_time:
+                bookings_list.append(b)
         
         return bookings_list
     else:

@@ -133,17 +133,12 @@ def delete_room():
     if request.method == 'GET':
         return root()
     room_id = request.form['room_id']
-    bookings = functions.get_bookings_of_a_room(room_id)
-    empty_flag = True
-    for b in bookings:
-        empty_flag = False
-    if not empty_flag:
-        #room has bookings
-        return "<script>alert('Room have booking(s), Please delete all bookings first'); window.history.back();</script>"
-    else:
-        #room is empty
+    empty_flag = functions.check_if_room_bookings_are_empty(room_id)
+    if empty_flag:  # room is empty
         functions.delete_room(room_id)
-    return redirect('/')
+        return redirect('/')
+    else:
+        return "<script>alert('Room have booking(s), Please delete all bookings first'); window.history.back();</script>"
 
 @app.route('/',methods = ['POST', 'GET'])
 def root():
