@@ -134,7 +134,8 @@ def delete_room():
         functions.delete_room(room_id)
         return redirect('/')
     else:
-        return "<script>alert('Room have booking(s), Please delete all bookings first'); window.history.back();</script>"
+        return render_template('show_message.html',error='Room have booking(s), Please delete all bookings first',form="root")
+        #return "<script>alert('Room have booking(s), Please delete all bookings first'); window.history.back();</script>"
 
 @app.route('/',methods = ['POST', 'GET'])
 def root():
@@ -143,7 +144,7 @@ def root():
     else:
         id_token = request.cookies.get("token")
         error_message = None
-        rooms_list = None
+        rooms_list = []
         if id_token:
             try:
                 claims = google.oauth2.id_token.verify_firebase_token(id_token, firebase_request_adapter)

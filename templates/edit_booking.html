@@ -11,6 +11,7 @@
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css" />
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="/static/scripts.js"></script>
     <script>
         function validate_values(event){
@@ -62,9 +63,9 @@
                     <td>Name: {{ session['name'] }}</td>
                     <td>Email: {{ session['email'] }}</td>
                     <td>
-                        <div id="firebase-auth-container"></div>
-                        <a href="/"><button id="sign-out" class="btn btn-danger" onclick="startLoad()" hidden="true">Sign out</button></a>
-                        <div id="login-info" hidden="true">    </div>
+                        <div hidden id="firebase-auth-container"></div>
+                        <a href="/"><button id="sign-out" onclick="startLoad()" class="btn btn-danger" hidden="true"><i class="fa fa-power-off"></i> Sign out</button></a>
+                        <div hidden id="login-info" hidden="true">    </div>
                     </td>
                 </tr>
 
@@ -72,21 +73,21 @@
         </div>
         <hr>
         <div align="center">
-            <table class="table" style="width:40%">
+            <table class="table" style="width:50%">
                 <tr class="table-warning">
                     <td colspan="2">
                         <form action="/add_room" method="POST">
-                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Add New Room">
+                            <button class="btn btn-warning form-control" onclick="startLoad()" type="submit"><i class="fa fa-plus-square" aria-hidden="true"></i> Add New Room</button>
                         </form>
                     </td>
                     <td>
                         <form action="/view_user_bookings" method="POST">
-                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Query Your Bookings">
+                            <button class="btn btn-warning form-control" onclick="startLoad()" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Query Your Bookings</button>
                         </form>
                     </td>
                     <td>
                         <form action="/" method="GET">
-                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Back to Home">
+                            <button class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Back to Home"> <i class="fa fa-home" aria-hidden="true"></i> Back to Home </button>
                         </form>
                     </td>
                 </tr>
@@ -118,7 +119,7 @@
                     </script>
                     <tr>
                         <td colspan="2">
-                            <input type="submit" class="form-control btn btn-info"  onclick="return validate_values(event);startLoad();" value="Update">
+                            <button type="submit" class="form-control btn btn-info"  onclick="return validate_values(event);startLoad();" value="Update"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update</button>
                         </td>
                     </tr>
                 </table>

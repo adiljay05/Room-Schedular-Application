@@ -7,6 +7,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <title>Error</title>
+    <script src="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css" />
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script>
         var timeout;
@@ -30,25 +34,77 @@
     </style>
 </head>
 <body>
-    <h1>{{ error }}</h1>
-    <!-- <form action="/" method="get">
-        <button type="submit" onclick="startLoad()" class="btn btn-info"> <i class="fa fa-arrow-circle-left"></i> Back to Home</button>
-    </form> -->
-    {% if form == 'add_room' %}
-        <form action='/add_room' method='post'><button type='submit' class="btn btn-info" onclick="startLoad()"> <i class="fa fa-arrow-circle-left"></i> Click to go back</button></form>
-    {% endif %}
-    {% if form == 'add_booking' %}
-    <form action="/add_booking" method="POST">
-        <input type="hidden" name="room_id" value="{{ room_id }}">
-        <button type='submit' class="btn btn-info" onclick="startLoad()"> <i class="fa fa-arrow-circle-left"></i> Click to go back</button>
-    </form>
-    {% endif %}
-    {% if form == 'edit_booking' %}
-    <form action="/edit_booking" method="POST">
-        <input type="hidden" name="booking_id" value="{{ booking_id }}">
-        <button type='submit' class="btn btn-info" onclick="startLoad()"> <i class="fa fa-arrow-circle-left"></i> Click to go back</button>
-    </form>
+    <h1>Welcome to Room Scheduler</h1>
+    <div id='loading'></div>
+    <hr>
+    {% if not session['email'] %}
+    <div id="firebase-auth-container"></div>
+    <a href="/"><button id="sign-out" class="btn btn-danger" hidden="true">Sign out</button></a>
+    <div id="login-info" hidden="true">    </div>
+    {% else %}
+        <div align="center">
+            <table class="table" style="width: 50%;">
+                <tr class="table-success">
+                    <td>Name: {{ session['name'] }}</td>
+                    <td>Email: {{ session['email'] }}</td>
+                    <td>
+                        <div hidden id="firebase-auth-container"></div>
+                        <a href="/"><button id="sign-out" onclick="startLoad()" class="btn btn-danger" hidden="true"><i class="fa fa-power-off"></i> Sign out</button></a>
+                        <div hidden id="login-info" hidden="true">    </div>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+        <hr>
+        <div align="center">
+            <table class="table" style="width:40%">
+                <tr class="table-warning">
+                    <td colspan="2">
+                        <form action="/add_room" method="POST">
+                            <button class="btn btn-warning form-control" onclick="startLoad()" type="submit"><i class="fa fa-plus-square" aria-hidden="true"></i> Add New Room</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/view_user_bookings" method="POST">
+                            <button class="btn btn-warning form-control" onclick="startLoad()" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Query Your Bookings</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/" method="GET">
+                            <button class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Back to Home"> <i class="fa fa-home" aria-hidden="true"></i> Back to Home </button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            <h1>{{ error }}</h1>
+            <!-- <form action="/" method="get">
+                <button type="submit" onclick="startLoad()" class="btn btn-info"> <i class="fa fa-arrow-circle-left"></i> Back to Home</button>
+            </form> -->
+            {% if form == 'add_room' %}
+                <form action='/add_room' method='post'><button type='submit' class="btn btn-info" onclick="startLoad()"> <i class="fa fa-arrow-circle-left"></i> Click to go back</button></form>
+            {% endif %}
+            {% if form == 'add_booking' %}
+            <form action="/add_booking" method="POST">
+                <input type="hidden" name="room_id" value="{{ room_id }}">
+                <button type='submit' class="btn btn-info" onclick="startLoad()"> <i class="fa fa-arrow-circle-left"></i> Click to go back</button>
+            </form>
+            {% endif %}
+            {% if form == 'edit_booking' %}
+            <form action="/edit_booking" method="POST">
+                <input type="hidden" name="booking_id" value="{{ booking_id }}">
+                <button type='submit' class="btn btn-info" onclick="startLoad()"> <i class="fa fa-arrow-circle-left"></i> Click to go back</button>
+            </form>
+            {% endif %}
+            {% if form == 'root' %}
+                <a href='/'><button type='submit' class="btn btn-info" onclick="startLoad()"> <i class="fa fa-arrow-circle-left"></i> Click to go back</button></a>
+            {% endif %}
+        </div>
     {% endif %}
     <!-- <div id='loading'></div> -->
 </body>
+<script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-auth.js"></script>
+<script src="{{ url_for('static', filename='app-setup.js') }}"></script>
+<script src="/static/scripts.js"></script>
 </html>
