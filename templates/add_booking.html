@@ -24,77 +24,103 @@
             return true;
         }
     </script>
+    <script>
+        var timeout;
+		function startLoad() {
+			$('#loading').html('<img src="http://rpg.drivethrustuff.com/shared_images/ajax-loader.gif" id="loader"//>');
+			clearTimeout(timeout);
+			timeout = setTimeout(loaded, 1500);
+		}
+    </script>
+    <style>
+        #loader {
+			width: 20%;
+			position: fixed;
+			left: 35%;
+    		top: 35%;
+		}
+        body{
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Welcome to Room Scheduler</h1>
+    <div id='loading'></div>
+    <hr>
+    {% if not session['email'] %}
     <div id="firebase-auth-container"></div>
-    <button id="sign-out" class="btn btn-danger" hidden="true">Sign out</button>
-    <div id="login-info" hidden="true">
-		<hr>
-		{% if session['name'] %}
-            <div align="center">
-                <table class="table" style="width: 40%;">
-                    <tr class="table-success">
-                        <td>Name: {{ session['name'] }}</td>
-                        <td>Email: {{ session['email'] }}</td>
+    <a href="/"><button id="sign-out" class="btn btn-danger" hidden="true">Sign out</button></a>
+    <div id="login-info" hidden="true">    </div>
+    {% else %}
+        <div align="center">
+            <table class="table" style="width: 50%;">
+                <tr class="table-success">
+                    <td>Name: {{ session['name'] }}</td>
+                    <td>Email: {{ session['email'] }}</td>
+                    <td>
+                        <div id="firebase-auth-container"></div>
+                        <a href="/"><button id="sign-out" onclick="startLoad()" class="btn btn-danger" hidden="true">Sign out</button></a>
+                        <div id="login-info" hidden="true">    </div>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+        <hr>
+        <div align="center">
+            <table class="table" style="width:40%">
+                <tr class="table-warning">
+                    <td colspan="2">
+                        <form action="/add_room" method="POST">
+                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Add New Room">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/view_user_bookings" method="POST">
+                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Query Your Bookings">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/" method="GET">
+                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Back to Home">
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <form style="border: 1px solid black; width: 40%;" action="/add_booking_to_database" method="POST">
+                <h2>Add Booking to Room No. {{ room_id }}</h2>
+                <table class="table table-active">
+                    <tr>
+                        <td>
+                            <input type="hidden" name="room_id" value="{{ room_id }}">
+                            Start Date & time:
+                        </td>
+                        <td><input type="datetime-local" required id="start_date_time" name="start_date_time"></td>
                     </tr>
-                </table>
-            </div>
-            <hr>
-            <div align="center">
-                <table class="table" style="width:40%">
-                    <tr class="table-warning">
+                    <tr>
+                        <td>End Date & time: </td>
+                        <td><input type="datetime-local" required name="end_date_time" id="end_date_time"></td>
+                    </tr>
+                    <script>
+                        var now = new Date();
+                        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                        document.getElementById('start_date_time').min = now.toISOString().slice(0,16);
+                        document.getElementById('end_date_time').min = now.toISOString().slice(0,16);
+                    </script>
+                    <tr>
                         <td colspan="2">
-                            <form action="/add_room" method="POST">
-                                <input class="btn btn-warning form-control" type="submit" value="Add New Room">
-                            </form>
-                        </td>
-                        <td>
-                            <form action="/view_user_bookings" method="POST">
-                                <input class="btn btn-warning form-control" type="submit" value="Query Your Bookings">
-                            </form>
-                        </td>
-                        <td>
-                            <form action="/" method="GET">
-                                <input class="btn btn-warning form-control" type="submit" value="Back to Home">
-                            </form>
+                            <input class="btn btn-info form-control" onclick="return validate_values(event)" type="submit" onclick="startLoad()" value="Add Booking">
                         </td>
                     </tr>
                 </table>
-            </div>
-            <div align="center">
-                <form style="border: 1px solid black; width: 40%;" action="/add_booking_to_database" method="POST">
-                    <h2>Add Booking to Room No. {{ room_id }}</h2>
-                    <table class="table table-active">
-                        <tr>
-                            <td>
-                                <input type="hidden" name="room_id" value="{{ room_id }}">
-                                Start Date & time:
-                            </td>
-                            <td><input type="datetime-local" required id="start_date_time" name="start_date_time"></td>                        
-                        </tr>
-                        <tr>
-                            <td>End Date & time: </td>
-                            <td><input type="datetime-local" required name="end_date_time" id="end_date_time"></td>                            
-                        </tr>
-                        <script>
-                            var now = new Date();
-                            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-                            document.getElementById('start_date_time').min = now.toISOString().slice(0,16);
-                            document.getElementById('end_date_time').min = now.toISOString().slice(0,16);
-                        </script>
-                        <tr>
-                            <td colspan="2">
-                                <input class="btn btn-info form-control" onclick="return validate_values(event)" type="submit" value="Add Booking">
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-		{% elif error_message %}
-		<p>Error Message: {{ error_message }}</p>
-		{% endif %}
+            </form>
+        </div>
+    {% endif %}
     </div>
 </body>
 <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>

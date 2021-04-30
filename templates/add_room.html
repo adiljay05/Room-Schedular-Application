@@ -12,60 +12,86 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
     <script src="/static/scripts.js"></script>
+    <script>
+        var timeout;
+		function startLoad() {
+			$('#loading').html('<img src="http://rpg.drivethrustuff.com/shared_images/ajax-loader.gif" id="loader"//>');
+			clearTimeout(timeout);
+			timeout = setTimeout(loaded, 1500);
+		}
+    </script>
+    <style>
+        #loader {
+			width: 20%;
+			position: fixed;
+			left: 35%;
+    		top: 35%;
+		}
+        body{
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Welcome to Room Scheduler</h1>
+    <div id='loading'></div>
+    <hr>
+    {% if not session['email'] %}
     <div id="firebase-auth-container"></div>
-    <button id="sign-out" class="btn btn-danger" hidden="true">Sign out</button>
-    <div id="login-info" hidden="true">
-		<hr>
-		{% if session['name'] %}
-            <div align="center">
-                <table class="table" style="width: 40%;">
-                    <tr class="table-success">
-                        <td>Name: {{ session['name'] }}</td>
-                        <td>Email: {{ session['email'] }}</td>
-                    </tr>
-                </table>
-            </div>
-            <hr>
-            <div align="center">
-                <table class="table" style="width:40%">
-                    <tr class="table-warning">
+    <a href="/"><button id="sign-out" class="btn btn-danger" hidden="true">Sign out</button></a>
+    <div id="login-info" hidden="true">    </div>
+    {% else %}
+        <div align="center">
+            <table class="table" style="width: 50%;">
+                <tr class="table-success">
+                    <td>Name: {{ session['name'] }}</td>
+                    <td>Email: {{ session['email'] }}</td>
+                    <td>
+                        <div id="firebase-auth-container"></div>
+                        <a href="/"><button id="sign-out" class="btn btn-danger" onclick="startLoad()" hidden="true">Sign out</button></a>
+                        <div id="login-info" hidden="true">    </div>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+        <hr>
+        <div align="center">
+            <table class="table" style="width:40%">
+                <tr class="table-warning">
+                    <td colspan="2">
+                        <form action="/add_room" method="POST">
+                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Add New Room">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/view_user_bookings" method="POST">
+                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Query Your Bookings">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/" method="GET">
+                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Back to Home">
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <form action="add_room_to_database" class="table-success" method="POST" style="border: 1px solid black; width: 40%;padding: 5px;">
+                <h2>Add New Room</h2>
+                <table class="table table-success">
+                    <tr>
                         <td colspan="2">
-                            <form action="/add_room" method="POST">
-                                <input class="btn btn-warning form-control" type="submit" value="Add New Room">
-                            </form>
-                        </td>
-                        <td>
-                            <form action="/view_user_bookings" method="POST">
-                                <input class="btn btn-warning form-control" type="submit" value="Query Your Bookings">
-                            </form>
-                        </td>
-                        <td>
-                            <form action="/" method="GET">
-                                <input class="btn btn-warning form-control" type="submit" value="Back to Home">
-                            </form>
+                            <input type="number" class="form-control" required placeholder="Enter room Number" name="room_id"/><br>
+                            <input type="submit" class="form-control btn btn-info" onclick="startLoad()" value="ADD Room">
                         </td>
                     </tr>
                 </table>
-            </div>
-            <div align="center">
-                <form action="add_room_to_database" class="table-success" method="POST" style="border: 1px solid black; width: 40%;padding: 5px;">
-                    <h2>Add New Room</h2>
-                    <table class="table table-success">                
-                        <tr>
-                            <td colspan="2">
-                                <input type="number" class="form-control" required placeholder="Enter room Number" name="room_id"/><br>
-                                <input type="submit" class="form-control btn btn-info" value="ADD Room">
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-		{% elif error_message %}
-		<p>Error Message: {{ error_message }}</p>
+            </form>
+        </div>
 		{% endif %}
     </div>
 </body>

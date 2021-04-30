@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <title>Error</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script>
+        var timeout;
+		function startLoad() {
+			$('#loading').html('<img src="http://rpg.drivethrustuff.com/shared_images/ajax-loader.gif" id="loader"//>');
+			clearTimeout(timeout);
+			timeout = setTimeout(loaded, 1500);
+		}
+    </script>
+    <style>
+        #loader {
+			width: 20%;
+			position: fixed;
+			left: 35%;
+    		top: 35%;
+		}
+        body{
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ error }}</h1>
+    <!-- <form action="/" method="get">
+        <button type="submit" onclick="startLoad()" class="btn btn-info"> <i class="fa fa-arrow-circle-left"></i> Back to Home</button>
+    </form> -->
+    {% if form == 'add_room' %}
+        <form action='/add_room' method='post'><button type='submit' class="btn btn-info" onclick="startLoad()"> <i class="fa fa-arrow-circle-left"></i> Click to go back</button></form>
+    {% endif %}
+    {% if form == 'add_booking' %}
+    <form action="/add_booking" method="POST">
+        <input type="hidden" name="room_id" value="{{ room_id }}">
+        <button type='submit' class="btn btn-info" onclick="startLoad()"> <i class="fa fa-arrow-circle-left"></i> Click to go back</button>
+    </form>
+    {% endif %}
+    {% if form == 'edit_booking' %}
+    <form action="/edit_booking" method="POST">
+        <input type="hidden" name="booking_id" value="{{ booking_id }}">
+        <button type='submit' class="btn btn-info" onclick="startLoad()"> <i class="fa fa-arrow-circle-left"></i> Click to go back</button>
+    </form>
+    {% endif %}
+    <!-- <div id='loading'></div> -->
+</body>
+</html>

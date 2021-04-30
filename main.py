@@ -8,6 +8,8 @@ import functions
 from datetime import timedelta
 from datetime import datetime
 
+import os
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "jawad1.json"
 
 app = Flask(__name__)
 app.secret_key = 'assignment2'
@@ -21,7 +23,7 @@ def make_session_permanent():
 @app.route('/add_room',methods=['POST','GET'])
 def add_room():
     if request.method == 'GET':
-        return root()
+        return redirect('/')
     return render_template('add_room.html')
 
 @app.route('/add_room_to_database',methods = ['POST','GET'])
@@ -38,7 +40,8 @@ def add_room_to_database():
         functions.addRoom(room_id)
         return redirect('/')
     else:
-        return "<h1>Room Already Exists</h1><br><form action='/add_room' method='post'><input type='submit' value='Click to go back'></form>"
+        msg = "Room Already Exists"
+        return render_template('show_message.html',error=msg,form = 'add_room')
 
 @app.route('/add_booking',methods = ['POST','GET'])
 def add_booking():
@@ -51,10 +54,14 @@ def add_booking():
 def add_booking_to_database():
     if request.method == 'GET':
         return root()
-    check = functions.add_booking_to_database()
-    if check == "error":
-        return "<script>alert('Booking is overlapping, Please select another time'); window.history.back();</script>"
-    return redirect('/')
+    room_id = request.form['room_id']
+    data = functions.add_booking_to_database(room_id)
+    if data == False:
+        return render_template('show_message.html',error='Booking is overlapping, Please select another time',room_id=room_id,form="add_booking")
+        # return "<script>alert('Booking is overlapping, Please select another time'); window.history.back();</script>"
+    bookings = functions.get_bookings_of_a_room(data)
+    bookings = sorted(bookings,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
+    return render_template("view_bookings.html",msg= "Room "+data+" have following bookings",bookings = bookings)
 
 @app.route('/view_bookings',methods = ['POST','GET'])
 def view_bookings():
@@ -69,18 +76,11 @@ def view_bookings():
 def view_user_bookings():
     if request.method == 'GET':
         return root()
-    user_info = functions.get_user_data()
-    room = functions.get_all_rooms()
-    user_bookings = []
-    for r in room:
-        bookings_list = r['bookings_list']
-        for b in bookings_list:
-            e_key = datastore_client.key('BookingInfo', b)
-            booking = datastore_client.get(e_key)
-            if booking['booked_by'] == user_info['email']:
-                user_bookings.append(booking)
+    query = datastore_client.query(kind='BookingInfo')
+    query.add_filter('booked_by','=',session['email'])
+    user_bookings = query.fetch()
     user_bookings = sorted(user_bookings,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
-    return render_template("show_user_bookings.html",bookings = user_bookings)
+    return render_template("show_user_bookings.html",bookings = user_bookings,msg=session['email']+"'s all bookings in all rooms")
 
 @app.route('/search_own_bookings_in_room',methods=['POST','GET'])
 def search_own_bookings_in_room():
@@ -89,7 +89,7 @@ def search_own_bookings_in_room():
     room_id = request.form['room_id']
     bookings = functions.get_bookings_of_a_room_of_current_user(room_id)
     bookings = sorted(bookings,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
-    return render_template("show_user_bookings.html",bookings = bookings)
+    return render_template("show_user_bookings.html",bookings = bookings,msg=session['email']+"'s all bookings in room: "+room_id)
 
 @app.route('/delete_booking',methods = ['POST','GET'])
 def delete_booking():
@@ -115,10 +115,7 @@ def edit_booking():
 def edit_booking_in_database():
     if request.method == 'GET':
         return root()
-    if functions.edit_booking_in_database():
-        return redirect('/')
-    else:
-        return "<script>alert('Booking is overlapping, Please select another time'); window.history.back();</script>"
+    return functions.edit_booking_in_database()
 
 @app.route('/search_using_filter',methods= ['POST','GET'])
 def search_using_filter():
@@ -133,8 +130,7 @@ def delete_room():
     if request.method == 'GET':
         return root()
     room_id = request.form['room_id']
-    empty_flag = functions.check_if_room_bookings_are_empty(room_id)
-    if empty_flag:  # room is empty
+    if functions.check_if_room_bookings_are_empty(room_id):  # room is empty
         functions.delete_room(room_id)
         return redirect('/')
     else:

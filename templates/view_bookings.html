@@ -12,98 +12,126 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
     <script src="/static/scripts.js"></script>
+    <script>
+        var timeout;
+		function startLoad() {
+			$('#loading').html('<img src="http://rpg.drivethrustuff.com/shared_images/ajax-loader.gif" id="loader"//>');
+			clearTimeout(timeout);
+			timeout = setTimeout(loaded, 1500);
+		}
+    </script>
+    <style>
+        #loader {
+			width: 20%;
+			position: fixed;
+			left: 35%;
+    		top: 35%;
+		}
+        body{
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
     <h1>Welcome to Room Scheduler</h1>
+    <div id='loading'></div>
+    <hr>
+    {% if not session['email'] %}
     <div id="firebase-auth-container"></div>
-    <button id="sign-out" class="btn btn-danger" hidden="true">Sign out</button>
-    <div id="login-info" hidden="true">
-		<hr>
-		{% if session['name'] %}
-            <div align="center">
-                <table class="table" style="width: 40%;">
-                    <tr class="table-success">
-                        <td>Name: {{ session['name'] }}</td>
-                        <td>Email: {{ session['email'] }}</td>
-                    </tr>
-                </table>
-            </div>
-            <hr>
-            <div align="center">
-                <table class="table" style="width:40%">
-                    <tr class="table-warning">
-                        <td colspan="2">
-                            <form action="/add_room" method="POST">
-                                <input class="btn btn-warning form-control" type="submit" value="Add New Room">
-                            </form>
-                        </td>
-                        <td>
-                            <form action="/view_user_bookings" method="POST">
-                                <input class="btn btn-warning form-control" type="submit" value="Query Your Bookings">
-                            </form>
-                        </td>
-                        <td>
-                            <form action="/" method="GET">
-                                <input class="btn btn-warning form-control" type="submit" value="Back to Home">
-                            </form>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div align="center">
-                <h2>{{ msg }}</h2>
-                <table class="table table-bordered table-dark" style="width: 50%;text-align: center;">
+    <a href="/"><button id="sign-out" class="btn btn-danger" hidden="true">Sign out</button></a>
+    <div id="login-info" hidden="true">    </div>
+    {% else %}
+        <div align="center">
+            <table class="table" style="width: 50%;">
+                <tr class="table-success">
+                    <td>Name: {{ session['name'] }}</td>
+                    <td>Email: {{ session['email'] }}</td>
+                    <td>
+                        <div id="firebase-auth-container"></div>
+                        <a href="/"><button id="sign-out" class="btn btn-danger" onclick="startLoad()" hidden="true">Sign out</button></a>
+                        <div id="login-info" hidden="true">    </div>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+        <hr>
+        <div align="center">
+            <table class="table" style="width:40%">
+                <tr class="table-warning">
+                    <td colspan="2">
+                        <form action="/add_room" method="POST">
+                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Add New Room">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/view_user_bookings" method="POST">
+                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Query Your Bookings">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/" method="GET">
+                            <input class="btn btn-warning form-control" onclick="startLoad()" type="submit" value="Back to Home">
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <h2>{{ msg }}</h2>
+            <table class="table table-bordered table-dark" style="text-align: center;">
+                <tr>
+                    <th>Sr No.</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Room No.</th>
+                    <th>Booked By</th>
+                    <th colspan="2">Actions</th>
+                </tr>
+                {% if not bookings %}
                     <tr>
-                        <th>Sr No.</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>Room No.</th>
-                        <th colspan="2">Actions</th>
+                        <td colspan="6">Sorry No Record Found</td>
                     </tr>
-                    {% if not bookings %}
-                        <tr>
-                            <td colspan="6">Sorry No Record Found</td>
-                        </tr>
-                    {% endif %}
-                    {% for b in bookings %}
-                        <tr>
-                            <td>{{loop.index}}</td>
-                            <td id="start{{ loop.index }}">{{ b['start_date_time'] }}</td>
-                            <td id="end{{ loop.index }}">{{ b['end_date_time'] }}</td>
-                            <script>
-                                id1 = document.getElementById('start{{ loop.index }}').innerHTML
-                                date = new Date(id1.toString())
-                                document.getElementById('start{{ loop.index }}').innerHTML = date.toString().slice(0,21)
-                                
-                                id2 = document.getElementById('end{{ loop.index }}').innerHTML
-                                date = new Date(id2.toString())
-                                document.getElementById('end{{ loop.index }}').innerHTML = date.toString().slice(0,21)
-                            </script>
-                            <td>{{ b['room_id'] }}</td>
-                            {% if b['booked_by'] == session['email'] %}
-                                <td>
-                                    <form action="/delete_booking" method="POST">
-                                        <input type="hidden" name="booking_id" value="{{ b.key.id }}">
-                                        <input type="hidden" name="request_from" value="room_bookings">
-                                        <input type="hidden" name="room_id" value="{{ b['room_id'] }}">
-                                        <input type="submit" class="btn btn-danger forom-control" value="Delete">
-                                    </form>                            
-                                </td>
-                                <td>
-                                    <form action="/edit_booking" method="POST">
-                                        <input type="hidden" name="booking_id" value="{{ b.key.id }}">
-                                        <input type="hidden" name="room_id" value="{{ b['room_id'] }}">
-                                        <input type="submit" class="btn btn-info form-control" value="Edit">
-                                    </form>                            
-                                </td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
-		{% elif error_message %}
-		<p>Error Message: {{ error_message }}</p>
+                {% endif %}
+                {% for b in bookings %}
+                    <tr>
+                        <td>{{loop.index}}</td>
+                        <td id="start{{ loop.index }}">{{ b['start_date_time'] }}</td>
+                        <td id="end{{ loop.index }}">{{ b['end_date_time'] }}</td>
+                        <script>
+                            id1 = document.getElementById('start{{ loop.index }}').innerHTML
+                            date = new Date(id1.toString())
+                            document.getElementById('start{{ loop.index }}').innerHTML = date.toString().slice(0,21)
+
+                            id2 = document.getElementById('end{{ loop.index }}').innerHTML
+                            date = new Date(id2.toString())
+                            document.getElementById('end{{ loop.index }}').innerHTML = date.toString().slice(0,21)
+                        </script>
+                        <td>{{ b['room_id'] }}</td>
+                        <td>{{b['booked_by']}}</td>
+                        {% if b['booked_by'] == session['email'] %}
+                            <td>
+                                <form action="/delete_booking" method="POST">
+                                    <input type="hidden" name="booking_id" value="{{ b.key.id }}">
+                                    <input type="hidden" name="request_from" value="room_bookings">
+                                    <input type="hidden" name="room_id" value="{{ b['room_id'] }}">
+                                    <input type="submit" class="btn btn-danger forom-control" onclick="startLoad()" value="Delete">
+                                </form>
+                            </td>
+                            <td>
+                                <form action="/edit_booking" method="POST">
+                                    <input type="hidden" name="booking_id" value="{{ b.key.id }}">
+                                    <input type="hidden" name="room_id" value="{{ b['room_id'] }}">
+                                    <input type="submit" class="btn btn-info form-control" onclick="startLoad()" value="Edit">
+                                </form>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
 		{% endif %}
     </div>
 </body>
