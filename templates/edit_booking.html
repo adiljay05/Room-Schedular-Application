@@ -96,9 +96,19 @@
         <div align="center">
             <form action="/edit_booking_in_database" class="table-success" method="POST" style="border: 1px solid black; width: 40%;padding: 5px;">
                 <input type="hidden" name="booking_id" value="{{ booking.key.id }}">
-                <input type="hidden" name="room_id" value="{{ booking['room_id'] }}">
+                <!-- <input type="hidden" name="room_id" value="{{ booking['room_id'] }}"> -->
                 <table class="table">
                     <h2>Edit Booking</h2>
+                    <tr>
+                        <td>Room Number</td>
+                        <td>
+                            <select name="room_id" class="form-control">
+                                {% for r in rooms %}
+                                <option {% if r['room_id'] == booking['room_id'] %}selected{% endif %}>{{r['room_id']}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
                     <tr>
                         <td>Start Time: </td>
                         <td>

@@ -178,6 +178,7 @@ def edit_booking_in_database():
             booking = datastore_client.get(booking_key)
             booking['start_date_time'] = start_date_time
             booking['end_date_time'] = end_date_time
+            booking['room_id'] = room_id
             datastore_client.put(booking)
             bookings = get_bookings_of_a_room(room_id)
             bookings = sorted(bookings,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))

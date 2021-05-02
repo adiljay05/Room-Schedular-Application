@@ -109,7 +109,8 @@ def edit_booking():
     booking_id = request.form['booking_id']
     booking_key = datastore_client.key('BookingInfo', int(booking_id))
     booking = datastore_client.get(booking_key)
-    return render_template('edit_booking.html',booking = booking)
+    rooms = functions.get_all_rooms()
+    return render_template('edit_booking.html',booking = booking,rooms = rooms)
 
 @app.route('/edit_booking_in_database',methods = ['POST','GET'])
 def edit_booking_in_database():
