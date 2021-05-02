@@ -55,13 +55,13 @@ def add_booking_to_database():
     if request.method == 'GET':
         return root()
     room_id = request.form['room_id']
-    data = functions.add_booking_to_database(room_id)
+    data = functions.addBooking(room_id)
     if data == False:
         return render_template('show_message.html',error='Booking is overlapping, Please select another time',room_id=room_id,form="add_booking")
         # return "<script>alert('Booking is overlapping, Please select another time'); window.history.back();</script>"
-    bookings = functions.get_bookings_of_a_room(data)
+    bookings = functions.get_bookings_of_a_room(room_id)
     bookings = sorted(bookings,key=lambda x:datetime.strptime(x['start_date_time'],"%Y-%m-%dT%H:%M"))
-    return render_template("view_bookings.html",msg= "Room "+data+" have following bookings",bookings = bookings)
+    return render_template("view_bookings.html",msg= "Room "+room_id+" have following bookings",bookings = bookings)
 
 @app.route('/view_bookings',methods = ['POST','GET'])
 def view_bookings():
@@ -151,7 +151,7 @@ def root():
                 claims = google.oauth2.id_token.verify_firebase_token(id_token, firebase_request_adapter)
                 session['name'] = claims['name']
                 session['email'] = claims['email']
-                user_info = functions.get_user_data()
+                user_info = functions.retrieveUserInfo(claims)
                 if user_info == None:
                     functions.createUserInfo(claims)
                 rooms_list = functions.get_all_rooms()
