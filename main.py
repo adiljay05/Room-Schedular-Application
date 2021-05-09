@@ -9,7 +9,7 @@ from datetime import timedelta
 from datetime import datetime
 
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "jawad1.json"
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "jawad1.json"
 
 app = Flask(__name__)
 app.secret_key = 'assignment2'

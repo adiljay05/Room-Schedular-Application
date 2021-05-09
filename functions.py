@@ -186,7 +186,12 @@ def search_using_filter():
         for b in all_bookings:
             st_time = datetime.strptime(b['start_date_time'], '%Y-%m-%dT%H:%M')
             en_time = datetime.strptime(b['end_date_time'], '%Y-%m-%dT%H:%M')
-            if st_time>start_time and en_time<end_time:
+            latest_start = max(start_time, st_time)
+            earliest_end = min(end_time, en_time)
+            change = (earliest_end - latest_start).days + 1
+            overlap = max(0, change)
+            if overlap>0:
+            # if st_time>start_time and en_time<end_time:
                 bookings_list.append(b)
         return bookings_list
     else:
