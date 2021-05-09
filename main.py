@@ -141,7 +141,7 @@ def delete_room():
 @app.route('/',methods = ['POST', 'GET'])
 def root():
     if request.method == 'POST':
-        return render_template('index.html', error_message=error_message)
+        return render_template('index.html')
     else:
         id_token = request.cookies.get("token")
         error_message = None
